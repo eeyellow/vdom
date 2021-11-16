@@ -1,5 +1,13 @@
 import render from "./render";
 
+const zip = (a, b) => {
+    const result = [];
+    for (let i = 0; i < Math.min(a.length, b.length); i++) {
+        result.push([a[i], b[i]]);
+    }
+    return result;
+}
+
 const diffAttrs = (oldAttrs, newAttrs) => {
     const patches = [];
 
@@ -27,6 +35,33 @@ const diffAttrs = (oldAttrs, newAttrs) => {
         for (const patch of patches) {
             patch(node);
         }
+    }
+}
+
+const diffChildren = (oldChildren, newChildren) => {
+    const patches = [];
+
+    for (const [oldChild, newChild] of zip(oldChildren, newChildren)) {
+        patches.push(diff(oldChild, newChild));
+    }
+
+    const additionalPatches = [];
+    for (const additionalChild of newChildren.slice(oldChildren.length)) {
+        additionalPatches.push(node => {
+            node.appendChild(render(additionalChild));
+            return node;
+        });
+    }
+
+
+    return parent => {
+        for (const [patch, child] of zip(patches, parent.childNodes)) {
+            patch(child);
+        }
+        for(const patch of additionalPatches) {
+            patch(parent);
+        }
+        return parent;
     }
 }
 
@@ -60,9 +95,11 @@ const diff = (vOldNode, vNewNode) => {
     }
 
     const patchAttrs = diffAttrs(vOldNode.attrs, vNewNode.attrs);
+    const patchChildren = diffChildren(vOldNode.children, vNewNode.children);
 
     return node => {
         patchAttrs(node);
+        patchChildren(node);
         return node;
     }
 };
