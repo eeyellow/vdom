@@ -8,6 +8,7 @@ const createVApp = (count) => createElement('div', {
         dataCount: count,
     },
     children: [
+        createElement('input'),
         String(count),
         createElement('img', {
             attrs: {
