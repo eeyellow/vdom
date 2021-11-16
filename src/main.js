@@ -1,4 +1,5 @@
 import createElement from './vdom/createElement'
+import render from './vdom/render'
 
 const vApp = createElement('div', {
     attrs: {
@@ -7,4 +8,6 @@ const vApp = createElement('div', {
     children: []
 })
 
-console.log(vApp)
+const app = render(vApp)
+
+console.log(app)
