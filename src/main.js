@@ -20,6 +20,11 @@ const createVApp = (count) => createElement('div', {
 let count = 0;
 const vApp = createVApp(count);
 const app = render(vApp);
-mount(app, document.querySelector('#app'))
+let rootEl = mount(app, document.querySelector('#app'))
+
+setInterval(() => {
+    count++;
+    rootEl = mount(render(createVApp(count)), rootEl);
+}, 1000);
 
 console.log(app)
